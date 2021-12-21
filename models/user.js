@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Content = require('./content');
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -12,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    required: true,
     unique: true
   },
   google: {
@@ -19,12 +21,7 @@ const UserSchema = new mongoose.Schema({
     default: false
   },
   list: {
-    type: [{
-      tittle: String,
-      comment: String,
-      date: Date
-
-    }],
+    type: [Content],
     default: []
   }
 });

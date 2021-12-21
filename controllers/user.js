@@ -6,11 +6,11 @@ async function postLogin(req, res) {
   
 }
 
-async function postRegister(req, res) {
+async function postSingUp(req, res) {
   
 }
 
 module.exports = {
   postLogin,
-  postRegister
+  postSingUp
 }
