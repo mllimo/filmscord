@@ -13,13 +13,17 @@ router.post('/signup', [
   check('email').custom(db_validator.isUniqueEmail),
   check('password').notEmpty(),
   fields_validator.validateFields
-], user_controller.postSingUp);
+],
+  user_controller.postSingUp
+);
 
-router.post('/login',[
+router.post('/login', [
   check('email_username').notEmpty(),
   check('password').notEmpty(),
   fields_validator.validateFields
-], user_controller.postLogin);
+],
+  user_controller.postLogin
+);
 
 
 
