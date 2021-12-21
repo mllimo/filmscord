@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { request, resonse } = require('express');
 
 async function postLogin(req, res) {

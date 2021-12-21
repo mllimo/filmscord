@@ -1,5 +1,5 @@
 const {request, response} = require('express');
-const User = require('../models/user');
+const User = require('../models/user').Users;
 
 async function isUniqueUsername(username_field) {
   const username = await User.findOne({username: username_field});

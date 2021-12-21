@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const Content = require('./content');
+const Schema = mongoose.Schema;
+const { ContentSchema } = require('./content');
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   username: {
     type: String,
     required: true,
@@ -20,9 +21,8 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  list: {
-    type: [Content],
-    default: []
+  contents: {
+    type: [ContentSchema]
   }
 });
 
@@ -31,4 +31,9 @@ UserSchema.methods.toJSON = function() {
   return user;
 }
 
-module.exports = mongoose.model('User', UserSchema);
+const Users = mongoose.model('User', UserSchema);
+
+module.exports = {
+  Users,
+  UserSchema
+};
