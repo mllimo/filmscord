@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const db = require('../database/config');
 require('dotenv').config();
 
 
@@ -7,10 +8,21 @@ class Server {
   constructor(port = 8080) {
     this.app = express();
     this.port = port;
+    
+    this.startDb();
 
     this.middlewares();
 
     this.routes();
+  }
+
+  startDb() {
+    try {
+      db.connect();
+      console.log('Database connected');
+    } catch (error) {
+      console.log('Database connection error: ', error);
+    }
   }
 
   middlewares() {
