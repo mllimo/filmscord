@@ -1,12 +1,22 @@
 const { request, resonse } = require('express');
+const checker = require('../helpers/checker');
 const User = require('../models/user').Users;
+const utils  = require('../helpers/utils');
 const bcrypt = require('bcryptjs');
 
-
 async function postLogin(req, res) {
-  res.json({
-    message: 'Login successful'
-  });
+  const body = req.body;
+  let user;
+  
+  if (checker.isEmail(body.email_username)) {
+    user = await User.findOne({ email: body.email_username });
+    if (!user) return res.status(400).json({ message: 'Email does not exist' });
+  } else {
+    user = await User.findOne({ username: body.email_username });
+    if (!user) return res.status(400).json({ message: 'Username does not exist' });
+  }
+
+  res.json({ message: 'Login successful', token: utils.generateToken(user._id) });
 }
 
 async function postSingUp(req, res) {
@@ -18,13 +28,9 @@ async function postSingUp(req, res) {
 
   try {
     await user.save();
-    res.json({
-      message: 'User created'
-    });
+    res.json({ message: 'User created', token: utils.generateToken(user._id) });
   } catch (error) {
-    res.status(400).json({
-      message: error.message
-    });
+    res.status(400).json({ message: error.message });
   }
 
 }
