@@ -4,45 +4,8 @@ const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
 const bcrypt = require('bcryptjs');
 
-async function postLogin(req, res) {
-  const body = req.body;
-  let user;
 
-  if (checker.isEmail(body.email_username)) {
-    user = await User.findOne({ email: body.email_username });
-    if (!user) return res.status(400).json({ message: 'Email does not exist' });
-  } else {
-    user = await User.findOne({ username: body.email_username });
-    if (!user) return res.status(400).json({ message: 'Username does not exist' });
-  }
-
-  if (!await bcrypt.compare(body.password, user.password)) 
-    return res.status(400).json({ message: 'Password does not match' });
-
-  const token = await utils.generateToken(user._id);
-  res.json({ message: 'Login successful', token: token });
-}
-
-async function postSingUp(req, res) {
-  const body = req.body;
-  const user = new User(body);
-
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(body.password, salt);
-
-  try {
-    console.log(user._id);
-    const token = await utils.generateToken(user._id);
-    await user.save(); 
-    res.json({ message: 'User created', token: token });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Signup error' });
-  }
-
-}
 
 module.exports = {
-  postLogin,
-  postSingUp
+
 }

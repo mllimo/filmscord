@@ -1,6 +1,6 @@
+const db = require('../database/config');
 const express = require('express');
 const cors = require('cors');
-const db = require('../database/config');
 require('dotenv').config();
 
 
@@ -31,7 +31,7 @@ class Server {
   }
 
   routes() {
-    this.app.use('/api/user', require('../routes/user'));
+    this.app.use('/api/auth', require('../routes/auth'));
   }
 
   listen() {
