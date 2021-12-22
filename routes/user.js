@@ -7,20 +7,20 @@ const router = new Router();
 
 
 router.post('/signup', [
-  check('username').notEmpty(),
+  check('username').notEmpty().withMessage('Username is required'),
   check('username').custom(db_validator.isUniqueUsername),
-  check('email').isEmail(),
+  check('email').isEmail().withMessage('Email is not valid'),
   check('email').custom(db_validator.isUniqueEmail),
-  check('password').notEmpty(),
+  check('password').notEmpty().withMessage('Password is required'),
   fields_validator.validateFields
 ],
   user_controller.postSingUp
 );
 
 router.post('/login', [
-  check('email_username').notEmpty(),
+  check('email_username').notEmpty().withMessage('Email or username is required'),
   check('email_username').custom(db_validator.existEmailUsername),
-  check('password').notEmpty(),
+  check('password').notEmpty().withMessage('Password is required'),
   fields_validator.validateFields
 ],
   user_controller.postLogin
