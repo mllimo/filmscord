@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     default: false
   },
   contents: {
-    type: [ContentSchema]
+    type: [{type: ContentSchema, unique: true}]
   }
 });
 

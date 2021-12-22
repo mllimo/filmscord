@@ -16,7 +16,7 @@ async function validateJwt(req = request, res = response, next) {
   
   try {
     const payload = await jwt.verify(token, process.env.JWT_SECRET);
-    req.id = payload;
+    req.id = payload.uid;
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });

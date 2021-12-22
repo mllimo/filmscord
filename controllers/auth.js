@@ -31,7 +31,6 @@ async function postSingUp(req, res) {
   user.password = await bcrypt.hash(body.password, salt);
 
   try {
-    console.log(user._id);
     const token = await utils.generateToken(user._id);
     await user.save(); 
     res.json({ message: 'User created', token: token });
