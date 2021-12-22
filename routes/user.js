@@ -19,6 +19,7 @@ router.post('/signup', [
 
 router.post('/login', [
   check('email_username').notEmpty(),
+  check('email_username').custom(db_validator.existEmailUsername),
   check('password').notEmpty(),
   fields_validator.validateFields
 ],

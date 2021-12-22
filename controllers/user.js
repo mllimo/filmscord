@@ -7,7 +7,8 @@ const bcrypt = require('bcryptjs');
 async function postLogin(req, res) {
   const body = req.body;
   let user;
-  
+  // TODO: Comprobar contraseña
+
   if (checker.isEmail(body.email_username)) {
     user = await User.findOne({ email: body.email_username });
     if (!user) return res.status(400).json({ message: 'Email does not exist' });
