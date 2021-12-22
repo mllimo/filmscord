@@ -7,9 +7,7 @@ async function generateToken(uid = '') {
       expiresIn: '30d'
     };
 
-    const payload = { uid };
-    console.log('payload: ', payload);
-  
+    const payload = { uid };  
     jwt.sign(payload, process.env.JWT_SECRET, options, (err, token) => {
       if (err) {
         reject('Error generating token');
