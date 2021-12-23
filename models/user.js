@@ -22,11 +22,29 @@ const UserSchema = new Schema({
     default: false
   },
   contents: {
-    type: [{type: ContentSchema, unique: true}]
+    type: [{
+      info: {
+        type: ContentSchema,
+        required: true,
+        unique: true
+      },
+      rate: {
+        type: Number,
+        default: 0
+      },
+      comment: {
+        type: String,
+        default: ''
+      },
+      date_watched: {
+        type: Date,
+        default: Date.now
+      },
+    }]
   }
 });
 
-UserSchema.methods.toJSON = function() {
+UserSchema.methods.toJSON = function () {
   const { __v, password, ...user } = this.toObject();
   return user;
 }

@@ -2,18 +2,22 @@ const mongoose = require('mongoose');
 
 const ContentSchema = new mongoose.Schema({
   title: {
-    type: String,
+    type: {id: Number, text: String},
     required: true
   },
-  rate: {
+  category: {
+    type: {id: Number, text: {type: String, enum: ['movie', 'tv']}},
+    required: true
+  },
+  genres: {
+    type: [{id: Number, text: String, unique: true}],
+    default : []
+  },
+  runtime: {
     type: Number,
     default: 0
   },
-  comment: {
-    type: String,
-    default: ''
-  },
-  date_watched: {
+  release_date: {
     type: Date,
     default: Date.now
   },

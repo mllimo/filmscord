@@ -7,6 +7,7 @@ const router = new Router();
 
 router.post('/:username', [
   fields_validator.validateJwt,
+  check('category').notEmpty().withMessage('Category is required'),
   check('title').notEmpty().withMessage('Title is required'),
 ], user_controller.postUser);
 
