@@ -2,16 +2,17 @@ const mongoose = require('mongoose');
 
 const ContentSchema = new mongoose.Schema({
   title: {
-    type: {id: Number, text: String},
+    type: { id: Number, text: String },
     required: true
   },
   category: {
-    type: {id: Number, text: {type: String, enum: ['movie', 'tv']}},
+    type: String,
+    enum: ['movie', 'tv'],
     required: true
   },
   genres: {
-    type: [{id: Number, text: String, unique: true}],
-    default : []
+    type: [{ id: Number, text: String }],
+    default: []
   },
   runtime: {
     type: Number,

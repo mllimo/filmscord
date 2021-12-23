@@ -12,13 +12,11 @@ async function postUser(req = request, res = response) {
   const body = req.body;
 
   try {
+    
+    if (body.category === 'movie') {
 
-    if (req.category === 'movie') {
-
-      const movie = await Content.findOne({ title: body.title });
-      if (movie) {
-        await db_operatios.findByIdAndUpdate(User, req.id, { $push: { contents: movie } });
-      } else {
+      let content = await Content.findOne({ title: {text: body.title} });
+      if (!content) {
         const info = await movie_api.getMovieInfo(body.title);
         body.title = info.title;
         body.cover = info.cover;
@@ -26,7 +24,7 @@ async function postUser(req = request, res = response) {
         body.release_date = info.release_date;
         body.runtime = info.runtime;
 
-        const content = new Content(body);
+        content = new Content(body);
         await content.save();
       }
 
@@ -36,8 +34,8 @@ async function postUser(req = request, res = response) {
 
     }
 
-    res.json({ message: 'Content added' });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ message: 'Content could not be added' });
   }
 

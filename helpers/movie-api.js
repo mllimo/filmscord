@@ -51,7 +51,7 @@ function getParamsTv(id) {
 }
 
 async function getMovieInfo(title) {
-  const info = {};
+  const info = { title: {}};
   const basic_info = axios.create(getMovies(title));
 
   const data = (await basic_info.get()).data;
