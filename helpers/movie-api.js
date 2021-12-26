@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const API_SEARCH_MOVIE_URL = 'https://api.themoviedb.org/3/search/movie';
-const API_SEARCH_TV_URL = 'https://api.themoviedb.org/3/search/movie';
+const API_SEARCH_TV_URL = 'https://api.themoviedb.org/3/search/tv';
 const API_MOVIE_URL = 'https://api.themoviedb.org/3/movie';
 const API_TV_URL = 'https://api.themoviedb.org/3/tv'
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
@@ -50,6 +50,7 @@ function getParamsTv(id) {
   };
 }
 
+// TODO: refactorizar
 async function getMovieInfo(title) {
   const info = { title: {}};
   const basic_info = axios.create(getMovies(title));
@@ -68,7 +69,34 @@ async function getMovieInfo(title) {
     return item;
   });
 
-  info.title.text = data_extended.title;
+  info.title.text = data_extended.original_title;
+  info.genres = data_extended.genres;
+  info.runtime = data_extended.runtime;
+  info.release_date = data_extended.release_date;
+
+  return info;
+}
+
+// TODO: refactorizar
+async function getTvInfo(title) {
+  const info = { title: {}};
+  const basic_info = axios.create(getTvs(title));
+
+  const data = (await basic_info.get()).data;
+  info.cover = IMAGE_URL + data.results[0].poster_path;
+  info.title.text = data.results[0].name;
+  info.title.id = data.results[0].id;
+
+  const extended_info = axios.create(getParamsTv(info.title.id));
+  const data_extended = (await extended_info.get()).data;
+  data_extended.genres.map(item => {
+    const text = item.name;
+    item.text = text;
+    delete item.name;
+    return item;
+  });
+
+  info.title.text = data_extended.original_title;
   info.genres = data_extended.genres;
   info.runtime = data_extended.runtime;
   info.release_date = data_extended.release_date;
@@ -77,5 +105,6 @@ async function getMovieInfo(title) {
 }
 
 module.exports = {
-  getMovieInfo
+  getMovieInfo,
+  getTvInfo,
 };
