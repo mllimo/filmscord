@@ -1,8 +1,6 @@
 const db = require('../database/config');
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-
 
 class Server {
   constructor(port = 8080) {
