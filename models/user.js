@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     type: [{
       info: {
         type: ContentSchema,
-        required: true,
+        default: [],
         unique: true
       },
       rate: {
