@@ -14,18 +14,6 @@ describe('POST /api/auth', () => {
   const password_1 = 'test_password_1';
   const email_1 = 'test1@test.com';
 
-  const body_signup_1 = {
-    username: username_1,
-    password: password_1,
-    email: email_1
-  };
-
-  const body_login_1 = {
-    email_username: username_1,
-    password: password_1,
-    email: email_1
-  };
-
   afterEach(async () => {
     await User.deleteMany({ username: username_1, email: email_1 });
   });
@@ -70,7 +58,7 @@ describe('POST /api/auth', () => {
       .post(auth_helper.LOGIN_URL)
       .type('json')
       .send({
-        username: 'test',
+        email_username: 'test',
         password: 'wrong'
       })
       .then((res) => {

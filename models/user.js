@@ -6,7 +6,8 @@ const UserSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    sparse: true
   },
   password: {
     type: String,
@@ -15,7 +16,8 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    sparse: true
   },
   google: {
     type: Boolean,
@@ -26,7 +28,8 @@ const UserSchema = new Schema({
       info: {
         type: ContentSchema,
         default: [],
-        unique: true
+        unique: true,
+        sparse: true 
       },
       rate: {
         type: Number,
