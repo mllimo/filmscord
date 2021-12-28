@@ -52,9 +52,7 @@ describe('POST /api/auth', () => {
         expect(res.body).not.eql(null);
         done();
       })
-      .catch(async (err) => {
-        return err;
-      });
+      .catch(async (err) => done(err));
   }).timeout(5000);
 
   it('It should not login a user with wrong credentials', async function () {
@@ -68,7 +66,7 @@ describe('POST /api/auth', () => {
       .then((res) => {
         expect(res).to.have.status(400);
       })
-      .catch((err) => err);
+      .catch((err) => done(err));
   });
 
 });

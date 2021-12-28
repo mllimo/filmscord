@@ -38,6 +38,11 @@ class Server {
       console.log(`Server is listening on port ${this.port}`);
     });
   }
+
+  close() {
+    this.app.close();
+  }
+  
 };
 
 module.exports = Server;

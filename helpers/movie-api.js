@@ -54,8 +54,12 @@ function getParamsTv(id) {
 async function getMovieInfo(title) {
   const info = { title: {}};
   const basic_info = axios.create(getMovies(title));
-
-  const data = (await basic_info.get()).data;
+  let data;
+  try {
+    data = (await basic_info.get()).data;
+  } catch (error) {
+    throw new Error('Movie not found');
+  }
   info.cover = IMAGE_URL + data.results[0].poster_path;
   info.title.text = data.results[0].name;
   info.title.id = data.results[0].id;
@@ -81,8 +85,12 @@ async function getMovieInfo(title) {
 async function getTvInfo(title) {
   const info = { title: {}};
   const basic_info = axios.create(getTvs(title));
-
-  const data = (await basic_info.get()).data;
+  let data;
+  try {
+    data = (await basic_info.get()).data;
+  } catch (error) {
+    throw new Error('Tv not found');
+  } 
   info.cover = IMAGE_URL + data.results[0].poster_path;
   info.title.text = data.results[0].name;
   info.title.id = data.results[0].id;

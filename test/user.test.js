@@ -1,10 +1,14 @@
 const Content = require('../models/content').Contents;
 const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
+const chai_http = require('chai-http');
 const server = require('./test');
-const chai = require('chai');
+const chai = require('chai')
+
+chai.use(chai_http);
 
 const describe = require('mocha').describe;
+const should = chai.should;
 const expect = chai.expect;
 
 describe('User', function () {
@@ -12,9 +16,12 @@ describe('User', function () {
   const username = 'test_user_2';
   const password = 'test_password_2';
   const email = 'test2@test.com';
+  let user_id;
 
   const title_1 = 'Spiderman';
+  const title_2 = 'Pokemon';
   const category_1 = 'movie';
+  const category_2 = 'tv';
   let content_1 = {};
   let content_2 = {};
   let token;
@@ -23,7 +30,7 @@ describe('User', function () {
     await User.deleteMany({});
     await Content.deleteMany({});
     content_1 = { title: { text: title_1 }, category: category_1 };
-    content_2 = { title: { text: title_1 }, category: category_1, rate: 5, comment: 'test comment' };
+    content_2 = { title: { text: content_2 }, category: category_2, rate: 5, comment: 'test comment' };
     const user = new User({ username, email, password });
     const content = new Content({ title: { text: title_1 }, category: category_1 });
     token = await utils.generateToken(user._id);
@@ -31,25 +38,43 @@ describe('User', function () {
     await content.save();
   });
 
-  describe('POST /api/user', () => {
-    it('It should add content with the title and categoty', async function () {
+  describe('POST /api/user/:username', function () {
+    it('It should add content with the title and categoty=movie', async function (done) {
       chai.request(server)
-        .post(USER_URL)
+        .post(USER_URL + '/' + username)
         .type('json')
         .set('authorization', token)
         .send(content_1)
-        .then((res) => {
+        .then(async (res) => {
           expect(res).to.have.status(200);
+          res.status.should.have.status(200);
+          console.log(res.body);
+          console.log(res.status);
+          const added = (await User.findOne({ username })).contents
+          expect(added).to.have.lengthOf(1);
+          //done();
+        })
+        .catch((err) => done(err));
+    });
+
+    it('It should add content with the title and categoty=tv', async function (done) {
+      chai.request(server)
+        .post(USER_URL + '/' + username)
+        .type('json')
+        .set('authorization', token)
+        .send(content_2)
+        .then((res) => {
+          res.should.have.status(200);
           const added = User.findOne({ username }).contents
           expect(added).to.have.lengthOf(1);
           done();
         })
-        .catch((err) => err);
+        .catch((err) => done(err));
     });
 
-    it('It should add content with all the info', async function () {
+    it('It should add content with all the info', async function (done) {
       chai.request(server)
-        .post(USER_URL)
+        .post(USER_URL + '/' + username)
         .type('json')
         .set('authorization', token)
         .send(content_2)
@@ -61,8 +86,41 @@ describe('User', function () {
           expect(added[0].comment).to.equal('test comment');
           done();
         })
-        .catch((err) => err);
+        .catch((err) => done(err));
     });
+
+    it('It should add content not duplicated', async function (done) {
+      chai.request(server)
+        .post(USER_URL)
+        .type('json')
+        .set('authorization', token)
+        .send(content_2)
+        .then(async (res) => {
+          expect(res).to.have.status(200);
+          const added = (await User.findOne({ username })).contents
+          expect(added).to.have.lengthOf(1);
+          expect(added[0].rate).to.equal(5);
+          expect(added[0].comment).to.equal('test comment');
+
+          chai.request(server)
+            .post(USER_URL)
+            .type('json')
+            .set('authorization', token)
+            .send(content_2)
+            .then((res) => {
+              expect(res).to.have.status(200);
+              const added_in_user = User.findOne({ username }).contents
+              expect(added_in_user).to.have.lengthOf(1);
+              expect(added_in_user[0].rate).to.equal(5);
+              expect(added_in_user[0].comment).to.equal('test comment');
+              done();
+            })
+            .catch((err) => done(err));
+        })
+        .catch((err) => done(err));
+
+    });
+
   });
 
   describe('GET /api/user', function () {

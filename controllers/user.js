@@ -72,7 +72,6 @@ async function postUser(req = request, res = response) {
     }
 
   } catch (error) {
-    console.error(error);
     res.status(400).json({ message: 'Content could not be added' });
   }
 
