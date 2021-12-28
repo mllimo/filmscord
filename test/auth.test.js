@@ -1,12 +1,12 @@
 const User = require('../models/user').Users;
 const chai_http = require('chai-http');
 const chai = require('chai');
+chai.use(chai_http);
 const server = require('./test');
 const auth_helper = require('./helpers/auth');
 
 const describe = require('mocha').describe;
 const expect = chai.expect;
-chai.use(chai_http);
 
 
 describe('POST /api/auth', () => {

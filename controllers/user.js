@@ -29,8 +29,6 @@ async function postUser(req = request, res = response) {
         await content.save();
       }
 
-      console.log(body)
-
       await db_operatios.findByIdAndUpdate(User, req.id, {
         $push: {
           contents: {
