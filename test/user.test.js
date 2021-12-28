@@ -1,5 +1,5 @@
-const User = require('../models/user').Users;
 const Content = require('../models/content').Contents;
+const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
 const server = require('./test');
 const chai = require('chai');
@@ -9,9 +9,9 @@ const expect = chai.expect;
 
 describe('User', function () {
   const USER_URL = '/api/user';
-  const username_1 = 'test_user_1';
-  const password_1 = 'test_password_1';
-  const email_1 = 'test1@test.com';
+  const username = 'test_user_2';
+  const password = 'test_password_2';
+  const email = 'test2@test.com';
 
   const title_1 = 'Spiderman';
   const category_1 = 'movie';
@@ -19,29 +19,25 @@ describe('User', function () {
   let token;
 
   beforeEach(async () => {
+    await User.deleteMany({});
+    await Content.deleteMany({});
     content_1 = { title: { text: title_1 }, category_1 };
-    const user = new User({ username_1, email_1, password_1 });
-    const content = new Content({ title: { text: title_1 }, category_1 });
+    const user = new User({ username, email, password });
+    const content = new Content({ title: { text: title_1 }, category: category_1 });
     token = await utils.generateToken(user._id);
     await user.save();
     await content.save();
   });
 
-  afterEach(async () => {
-    await User.deleteMany({});
-    await Content.deleteMany({});
-  });
-
-  describe('POST /api/user', function () {
+  describe('POST /api/user',  () => {
     it ('It should add content', async function() {
-      chai.requiest(server)
+      chai.request(server)
       .post(USER_URL)
       .type('json')
-      .header('Authorization', token)
+      .set('authorization', token)
       .send(content_1)
       .then((res) => {
         expect(res).to.have.status(200);
-        expect(res.body).not.eql(null);
         done();
       })
       .catch((err) => err);

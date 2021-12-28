@@ -59,7 +59,7 @@ describe('POST /api/auth', () => {
 
   it('It should not login a user with wrong credentials', async function () {
     chai.request(server)
-      .post(auth_helper.LOGIN_URL)
+      .post(LOGIN_URL)
       .type('json')
       .send({
         email_username: 'test',
