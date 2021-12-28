@@ -1,15 +1,16 @@
 const User = require('../models/user').Users;
 const chai_http = require('chai-http');
+const server = require('./test');
 const chai = require('chai');
 chai.use(chai_http);
-const server = require('./test');
-const auth_helper = require('./helpers/auth');
 
 const describe = require('mocha').describe;
 const expect = chai.expect;
 
-
 describe('POST /api/auth', () => {
+  const SIGNUP_URL = '/api/auth/signup';
+  const LOGIN_URL = '/api/auth/login';
+
   const username_1 = 'test_user_1';
   const password_1 = 'test_password_1';
   const email_1 = 'test1@test.com';
@@ -20,7 +21,7 @@ describe('POST /api/auth', () => {
 
   it('It should signup a user', async function () {
     chai.request(server)
-      .post(auth_helper.SIGNUP_URL)
+      .post(SIGNUP_URL)
       .type('json')
       .send({
         username: username_1,
@@ -40,7 +41,7 @@ describe('POST /api/auth', () => {
     user.save();
 
     chai.request(server)
-      .post(auth_helper.LOGIN_URL)
+      .post(LOGIN_URL)
       .type('json')
       .send({
         email_username: username_1,
