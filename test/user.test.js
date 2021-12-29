@@ -73,50 +73,33 @@ describe('User', function () {
     });
 
     it('It should add content with all the info', async function () {
-      chai.request(server)
+      const res = await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2)
-        .then(async (res) => {
-          expect(res).to.have.status(200);
-          const added = (await User.findOne({ username })).contents
-          expect(added).to.have.lengthOf(1);
-          expect(added[0].rate).to.equal(5);
-          expect(added[0].comment).to.equal('test comment');
-        })
-        .catch((err) => err);
+        .send(send_content_2);
+      expect(res).to.have.status(200);
+      const added = (await User.findOne({ username })).contents
+      expect(added).to.have.lengthOf(1);
+      expect(added[0].rate).to.equal(5);
+      expect(added[0].comment).to.equal('test comment');
     });
 
     it('It should add content not duplicated', async function () {
-      chai.request(server)
+      await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2)
-        .then(async (res) => {
-          expect(res).to.have.status(200);
-          const added = (await User.findOne({ username })).contents
-          expect(added).to.have.lengthOf(1);
-          expect(added[0].rate).to.equal(5);
-          expect(added[0].comment).to.equal('test comment');
+        .send(send_content_2);
+        
+      await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_2);
 
-          chai.request(server)
-            .post(USER_URL)
-            .type('json')
-            .set('authorization', token)
-            .send(send_content_2)
-            .then(async (res) => {
-              expect(res).to.have.status(200);
-              const added_in_user = (await User.findOne({ username })).contents
-              expect(added_in_user).to.have.lengthOf(1);
-              expect(added_in_user[0].rate).to.equal(5);
-              expect(added_in_user[0].comment).to.equal('test comment');
-            })
-            .catch((err) => err);
-        })
-        .catch((err) => err);
-
+      const size = (await User.findOne({ username })).contents.length;
+      expect(size).to.equal(1);
     });
 
   });
