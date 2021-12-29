@@ -2,6 +2,7 @@ const { request, resonse } = require('express');
 const checker = require('../helpers/checker');
 const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
+const bcrypt = require('bcryptjs');
 
 async function postLogin(req, res) {
   const body = req.body;
@@ -15,7 +16,7 @@ async function postLogin(req, res) {
     if (!user) return res.status(400).json({ message: 'Username does not exist' });
   }
 
-  if (!await bcrypt.compare(body.password, user.password)) 
+  if (!(await bcrypt.compare(body.password, user.password))) 
     return res.status(400).json({ message: 'Password does not match' });
 
   const token = await utils.generateToken(user._id);

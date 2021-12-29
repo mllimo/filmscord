@@ -41,21 +41,21 @@ describe('POST /api/auth', () => {
   });
 
   it('It should login a user', async function () {
-    const hashed = await utils.hashPassword(password_1);
-    const user = new User({ username: username_1, email: email_1, password: hashed });
-    user.save();
-
+    const user = new User({username: username_1, password: password_1, email: email_1});
+    user.password = await utils.hashPassword(password_1);
+    await user.save();
+    
     const res = await chai.request(server)
-      .post(LOGIN_URL)
-      .type('json')
-      .send({
-        email_username: username_1,
-        password: password_1,
-      });
+    .post(LOGIN_URL)
+    .type('json')
+    .send({
+      email_username: username_1,
+      password: password_1,
+    });
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).not.to.be.null;
-  }).timeout(5000);
+  });
 
   it('It should not login a user with wrong credentials', async function () {
     const res = await chai.request(server)
