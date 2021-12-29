@@ -7,70 +7,38 @@ const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
 const bcrypt = require('bcryptjs');
 
+async function insertContent(data, id) {
+  const findFunction = data.category === 'movie' ? movie_api.getMovieInfo : movie_api.getTvInfo;
+  content = await Content.findOne({ title: { text: data.title }, category: data.category });
+  if (!content) {
+    info = await findFunction(data.title);
+    data = { ...data, ...info };
+    content = new Content(data);
+    content.save();
+  }
+  await db_operatios.findByIdAndUpdate(User, id, {
+    $push: {
+      contents: {
+        info: content,
+        rate: data.rate,
+        comment: data.comment,
+        data_watched: data.data_watch
+      }
+    }
+  });
+}
 
 // TODO: refactorizar
 async function postUserContent(req = request, res = response) {
   const body = req.body;
 
   try {
-    let info;
-    let content;
+    await insertContent(body, req.id);
     if (body.category === 'movie') {
-      content = await Content.findOne({ title: { text: body.title }, category: body.category });
-      if (!content) {
-        info = await movie_api.getMovieInfo(body.title);
-        body.title = info.title;
-        body.cover = info.cover;
-        body.genres = info.genres;
-        body.release_date = info.release_date;
-        body.runtime = info.runtime;
-
-        content = new Content(body);
-        await content.save();
-      }
-
-      await db_operatios.findByIdAndUpdate(User, req.id, {
-        $push: {
-          contents: {
-            info: content,
-            rate: body.rate,
-            comment: body.comment,
-            data_watched: body.data_watch
-          }
-        }
-      });
-
       res.json({ message: 'Movie added to your library' });
     } else {
-      info = await movie_api.getTvInfo(body.title);
-      content = await Content.findOne({ title: { text: body.title }, category: body.category });
-
-      if (!content) {
-        info = await movie_api.getTvInfo(body.title);
-        body.title = info.title;
-        body.cover = info.cover;
-        body.genres = info.genres;
-        body.release_date = info.release_date;
-        body.runtime = info.runtime;
-
-        content = new Content(body);
-        await content.save();
-      }
-
-      await db_operatios.findByIdAndUpdate(User, req.id, {
-        $push: {
-          contents: {
-            info: content,
-            rate: body.rate,
-            comment: body.comment,
-            data_watched: body.data_watch
-          }
-        }
-      });
-
       res.json({ message: 'Tv added to your library' });
     }
-
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

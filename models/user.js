@@ -55,6 +55,7 @@ UserSchema.methods.toJSON = function () {
 
 const Users = mongoose.model('User', UserSchema);
 
+
 module.exports = {
   Users,
   UserSchema
