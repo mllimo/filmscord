@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 
 
 // TODO: refactorizar
-async function postUser(req = request, res = response) {
+async function postUserContent(req = request, res = response) {
   const body = req.body;
 
   try {
@@ -71,13 +71,13 @@ async function postUser(req = request, res = response) {
       res.json({ message: 'Tv added to your library' });
     }
 
-  } catch (error) {
-    res.status(400).json({ message: 'Content could not be added' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 
 }
 
 
 module.exports = {
-  postUser
+  postUserContent
 }

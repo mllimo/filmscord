@@ -1,4 +1,6 @@
+const Content = require('../models/content').Contents; 
 const User = require('../models/user').Users;
+const utils = require('../helpers/utils');
 const chai_http = require('chai-http');
 const server = require('./test');
 const chai = require('chai');
@@ -15,58 +17,55 @@ describe('POST /api/auth', () => {
   const password_1 = 'test_password_1';
   const email_1 = 'test1@test.com';
 
-  beforeEach(async () => {
+  before(async () => {
     await User.deleteMany({});
+    await Content.deleteMany({});
+  });
+
+  afterEach(async () => {
+    await User.deleteMany({});
+    await Content.deleteMany({});
   });
 
   it('It should signup a user', async function () {
-    chai.request(server)
+    const res = await chai.request(server)
       .post(SIGNUP_URL)
       .type('json')
       .send({
         username: username_1,
         password: password_1,
         email: email_1
-      })
-      .then((res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).have.a.property('token');
-        done();
-      })
-      .catch((err) => err);
+      });
+    expect(res).to.have.status(200);
+    expect(res.body).have.a.property('token');
   });
 
   it('It should login a user', async function () {
-    const user = new User({ username: username_1, email: email_1, password: password_1 });
+    const hashed = await utils.hashPassword(password_1);
+    const user = new User({ username: username_1, email: email_1, password: hashed });
     user.save();
 
-    chai.request(server)
+    const res = await chai.request(server)
       .post(LOGIN_URL)
       .type('json')
       .send({
         email_username: username_1,
         password: password_1,
-      })
-      .then(async (res) => {
-        expect(res.statusCode).to.equal(200);
-        expect(res.body).not.eql(null);
-        done();
-      })
-      .catch(async (err) => done(err));
+      });
+
+    expect(res.statusCode).to.equal(200);
+    expect(res.body).not.to.be.null;
   }).timeout(5000);
 
   it('It should not login a user with wrong credentials', async function () {
-    chai.request(server)
+    const res = await chai.request(server)
       .post(LOGIN_URL)
       .type('json')
       .send({
         email_username: 'test',
         password: 'wrong'
-      })
-      .then((res) => {
-        expect(res).to.have.status(400);
-      })
-      .catch((err) => done(err));
+      });
+    expect(res).to.have.status(422);
   });
 
 });

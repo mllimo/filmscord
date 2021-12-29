@@ -2,7 +2,6 @@ const { request, resonse } = require('express');
 const checker = require('../helpers/checker');
 const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
-const bcrypt = require('bcryptjs');
 
 async function postLogin(req, res) {
   const body = req.body;
@@ -27,8 +26,7 @@ async function postSingUp(req, res) {
   const body = req.body;
   const user = new User(body);
 
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(body.password, salt);
+  user.password = await utils.hashPassword(body.password);
 
   try {
     const token = await utils.generateToken(user._id);
