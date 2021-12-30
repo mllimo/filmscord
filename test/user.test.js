@@ -127,87 +127,88 @@ describe('User', function () {
   });
 
   describe('PUT /api/user', function () {
-    describe('PUT /api/user', function () {
-      it('It should let modify rate field', async function () {
-        const id = await chai.request(server)
-          .post(USER_URL + '/' + username + '/content')
-          .type('json')
-          .set('authorization', token)
-          .send(send_content_1).body.content;
-  
-        const res = await chai.request(server)
-          .put(USER_URL + '/' + username)
-          .type('json')
-          .set('authorization', token)
-          .send({ rate: 5 });
-  
-        expect(res).to.have.status(200);
-        user = await User.findOne({ username });
-        const content = user.contents.find(content => content.title.id === id);
-        expect(content.rate).to.equal(5);
-      });
-  
-      it('It should let modify comment field', async function () {
-        const id = await chai.request(server)
-          .post(USER_URL + '/' + username + '/content')
-          .type('json')
-          .set('authorization', token)
-          .send(send_content_1).body.content;
-  
-        const res = await chai.request(server)
-          .put(USER_URL + '/' + username)
-          .type('json')
-          .set('authorization', token)
-          .send({ comment: 'genial' });
-  
-        expect(res).to.have.status(200);
-        user = await User.findOne({ username });
-        const content = user.contents.find(content => content.title.id === id);
-        expect(content.comment).to.equal('genial');
-      });
-  
-      it('It should let modify data_watched field', async function () {
-        const date = new Date();
-        const id = await chai.request(server)
-          .post(USER_URL + '/' + username + '/content')
-          .type('json')
-          .set('authorization', token)
-          .send(send_content_1).body.content;
-  
-        const res = await chai.request(server)
-          .put(USER_URL + '/' + username)
-          .type('json')
-          .set('authorization', token)
-          .send({ data_watched: date });
-  
-        expect(res).to.have.status(200);
-        user = await User.findOne({ username });
-        const content = user.contents.find(content => content.title.id === id);
-        expect(content.data_watched).to.equal(date);
-      });
-  
-      it('It should let modify all fields', async function () {
-        const date = new Date();
-        const id = await chai.request(server)
-          .post(USER_URL + '/' + username + '/content')
-          .type('json')
-          .set('authorization', token)
-          .send(send_content_1).body.content;
-  
-        const res = await chai.request(server)
-          .put(USER_URL + '/' + username)
-          .type('json')
-          .set('authorization', token)
-          .send({ data_watched: date, rate: 5, comment: 'genial' });
-  
-        expect(res).to.have.status(200);
-        user = await User.findOne({ username });
-        const content = user.contents.find(content => content.title.id === id);
-        expect(content.data_watched).to.equal(date);
-        expect(content.rate).to.equal(5);
-        expect(content.comment).to.equal('genial');
-      });
+
+    it('It should let modify rate field', async function () {
+      const id = (await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1)).body.content;
+
+      const res = await chai.request(server)
+        .put(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send({ fields: { rate: 10 }, 'id': id });
+      
+      expect(res).to.have.status(200);
+      user = await User.findOne({ username });
+      //console.log(user.contents[0].info);
+      const content = user.contents.find(content => content.info.title.id === id);
+      expect(content.rate).to.equal(10);
     });
+
+    it('It should let modify comment field', async function () {
+      const id = (await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1)).body.content;
+
+      const res = await chai.request(server)
+        .put(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send({ fields: { comment: 'genial' }, 'id': id });
+        //console.log(res);
+      expect(res).to.have.status(200);
+      user = await User.findOne({ username });
+      const content = user.contents.find(content => content.info.title.id === id);
+      expect(content.comment).to.equal('genial');
+    });
+
+    it('It should let modify data_watched field', async function () {
+      const date = new Date();
+      const id = (await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1)).body.content;
+
+      const res = await chai.request(server)
+        .put(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send({ fields: { date_watched: date }, 'id': id });
+
+      expect(res).to.have.status(200);
+      user = await User.findOne({ username });
+      const content = user.contents.find(content => content.info.title.id === id);
+      expect(content.data_watched).to.equal(date);
+    });
+
+    it('It should let modify all fields', async function () {
+      const date = new Date();
+      const id = (await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1)).body.content;
+
+      const res = await chai.request(server)
+        .put(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send({ fields: { date_watched: date, rate: 5, comment: 'genial' }, 'id': id });
+
+      expect(res).to.have.status(200);
+      user = await User.findOne({ username });
+      const content = user.contents.find(content => content.info.title.id === id);
+      expect(content.data_watched).to.equal(date);
+      expect(content.rate).to.equal(5);
+      expect(content.comment).to.equal('genial');
+    });
+
   });
 
   describe('DELETE /api/user/:username/content', function () {

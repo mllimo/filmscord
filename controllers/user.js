@@ -57,10 +57,34 @@ async function getUserContent(req = request, res = response) {
   }
 }
 
+async function putUserContent(req = request, res = response) {
+
+  const body = req.body;
+  try {
+    // Provisional y no creo que sea buena idea
+    //console.log(body.fields);
+    for (let key in body.fields) {
+      let obj = {};
+      const content_key = `contents.$.${key}`
+      obj[content_key] = body.fields[key];
+      await db_operations.findOneAndUpdate(User,
+        {
+          _id: req.id,
+          'contents.info.title.id': body.id
+        },
+        {
+          $set: obj
+        });
+    }
+    res.json({ message: 'Content updated' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 async function deleteUserContent(req = request, res = response) {
   try {
     for (let id of req.body.ids) {
-      // erase content from user with the info.title.id = id
       await db_operations.findOneAndUpdate(User, { _id: req.id }, { $pull: { contents: { 'info.title.id': id } } });
     }
     res.json({ message: 'Contents deleted' });
@@ -73,5 +97,6 @@ async function deleteUserContent(req = request, res = response) {
 module.exports = {
   postUserContent,
   getUserContent,
+  putUserContent,
   deleteUserContent
 }
