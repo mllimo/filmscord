@@ -1,7 +1,7 @@
 const db_operations = require('../database/operations');
 const Content = require('../models/content').Contents;
 const movie_api = require('../helpers/movie-api');
-const { request, resonse } = require('express');
+const { request, resonse, response } = require('express');
 const checker = require('../helpers/checker');
 const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
@@ -19,7 +19,7 @@ async function insertContent(data, id) {
   await db_operations.findOneAndUpdate(User,
     {
       _id: id,
-      'contents.info.title.id': { $ne: data.title.id,},
+      'contents.info.title.id': { $ne: data.title.id, },
     },
     {
       $push: {
@@ -31,25 +31,24 @@ async function insertContent(data, id) {
         }
       }
     });
+  return data;
 }
 
 
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
-    await insertContent(body, req.id);
-    if (body.category === 'movie') {
-      res.json({ message: 'Movie added to your library' });
-    } else {
-      res.json({ message: 'Tv added to your library' });
-    }
+    const data = await insertContent(body, req.id);
+    res.json({
+      message: (body.category === 'movie' ? 'Movie added to your library' : 'TV show added to your library'),
+      content: data.title.id
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
 
 async function getUserContent(req = request, res = response) {
-  console.log(req.id)
   try {
     const user = await User.findOne({ _id: req.id });
     res.json(user.contents);
@@ -58,8 +57,21 @@ async function getUserContent(req = request, res = response) {
   }
 }
 
+async function deleteUserContent(req = request, res = response) {
+  try {
+    for (let id of req.body.ids) {
+      // erase content from user with the info.title.id = id
+      await db_operations.findOneAndUpdate(User, { _id: req.id }, { $pull: { contents: { 'info.title.id': id } } });
+    }
+    res.json({ message: 'Contents deleted' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 
 module.exports = {
   postUserContent,
-  getUserContent
+  getUserContent,
+  deleteUserContent
 }

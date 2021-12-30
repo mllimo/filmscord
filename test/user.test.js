@@ -36,10 +36,8 @@ describe('User', function () {
     send_content_1 = { title: title_1, category: category_1 };
     send_content_2 = { title: title_2, category: category_2, rate: 5, comment: 'test comment' };
     const user = new User({ username, email, password });
-    const content = new Content({ title: { text: title_1 }, category: category_1 });
     token = await utils.generateToken(user._id);
     await user.save();
-    await content.save();
   });
 
   afterEach(async () => {
@@ -132,8 +130,26 @@ describe('User', function () {
 
   });
 
-  describe('DELETE /api/user', function () {
+  describe('DELETE /api/user/:username/content', function () {
+    it('It should delete a user content', async function () {
+      const id = (await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1)).body.content;
 
+      const res = await chai.request(server)
+        .delete(USER_URL + '/' + username + '/content/')
+        .type('json')
+        .set('authorization', token)
+        .send({
+          ids: [id]
+        });
+
+      expect(res).to.have.status(200);
+      user = await User.findOne({ username, $contents: { info: { title: { 'id': id } } } });
+      expect(user.contents).to.be.empty;
+    });
   });
 
 });

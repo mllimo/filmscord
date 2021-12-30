@@ -17,4 +17,8 @@ router.get('/:username/content', [
   fields_validator.validateJwt,
 ], user_controller.getUserContent);
 
+router.delete('/:username/content', [
+  fields_validator.validateJwt,
+], user_controller.deleteUserContent);
+
 module.exports = router;
