@@ -1,4 +1,4 @@
-const db_operatios = require('../database/operations');
+const db_operations = require('../database/operations');
 const Content = require('../models/content').Contents;
 const movie_api = require('../helpers/movie-api');
 const { request, resonse } = require('express');
@@ -16,16 +16,21 @@ async function insertContent(data, id) {
     content = new Content(data);
     content.save();
   }
-  await db_operatios.findByIdAndUpdate(User, id, {
-    $push: {
-      contents: {
-        info: content,
-        rate: data.rate,
-        comment: data.comment,
-        data_watched: data.data_watch
+  await db_operations.findOneAndUpdate(User,
+    {
+      _id: id,
+      'contents.info.title.id': { $ne: data.title.id,},
+    },
+    {
+      $push: {
+        contents: {
+          info: content,
+          rate: data.rate,
+          comment: data.comment,
+          data_watched: data.data_watch
+        }
       }
-    }
-  });
+    });
 }
 
 // TODO: refactorizar
