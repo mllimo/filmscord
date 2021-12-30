@@ -33,10 +33,9 @@ async function insertContent(data, id) {
     });
 }
 
-// TODO: refactorizar
+
 async function postUserContent(req = request, res = response) {
   const body = req.body;
-
   try {
     await insertContent(body, req.id);
     if (body.category === 'movie') {
@@ -47,10 +46,20 @@ async function postUserContent(req = request, res = response) {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
+}
 
+async function getUserContent(req = request, res = response) {
+  console.log(req.id)
+  try {
+    const user = await User.findOne({ _id: req.id });
+    res.json(user.contents);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 }
 
 
 module.exports = {
-  postUserContent
+  postUserContent,
+  getUserContent
 }

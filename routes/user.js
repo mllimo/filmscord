@@ -5,7 +5,7 @@ const { Router } = require('express');
 
 const router = new Router();
 
-router.post('/:username/content',[
+router.post('/:username/content', [
   fields_validator.validateJwt,
   check('category').notEmpty().withMessage('Category is required'),
   check('category').matches(/^(movie|tv)$/).withMessage('Category is not valid'),
@@ -13,6 +13,8 @@ router.post('/:username/content',[
   fields_validator.validateFields
 ], user_controller.postUserContent);
 
-
+router.get('/:username/content', [
+  fields_validator.validateJwt,
+], user_controller.getUserContent);
 
 module.exports = router;

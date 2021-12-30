@@ -91,7 +91,7 @@ describe('User', function () {
         .type('json')
         .set('authorization', token)
         .send(send_content_2);
-        
+
       await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
@@ -104,8 +104,28 @@ describe('User', function () {
 
   });
 
-  describe('GET /api/user', function () {
+  describe('GET /api/user/:username/content', function () {
+    it('It should get the user\'s content', async function () {
+      await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_2);
 
+      await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1);
+
+      const res = await chai.request(server)
+        .get(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token);
+
+      expect(res).to.have.status(200);
+      expect(res.body).to.have.lengthOf(2);
+    });
   });
 
   describe('PUT /api/user', function () {
