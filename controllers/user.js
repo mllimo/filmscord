@@ -57,25 +57,27 @@ async function getUserContent(req = request, res = response) {
   }
 }
 
+// Todo: Refactorizar
 async function putUserContent(req = request, res = response) {
-
   const body = req.body;
   try {
-    // Provisional y no creo que sea buena idea
-    //console.log(body.fields);
+    let obj = {};
     for (let key in body.fields) {
-      let obj = {};
       const content_key = `contents.$.${key}`
-      obj[content_key] = body.fields[key];
-      await db_operations.findOneAndUpdate(User,
-        {
-          _id: req.id,
-          'contents.info.title.id': body.id
-        },
-        {
-          $set: obj
-        });
+      if (key == 'date_watched') {
+        obj[content_key] = new Date(body.fields[key]);
+      } else {
+        obj[content_key] = body.fields[key];
+      }  
     }
+    await db_operations.findOneAndUpdate(User,
+      {
+        _id: req.id,
+        'contents.info.title.id': body.id
+      },
+      {
+        $set: obj
+      });
     res.json({ message: 'Content updated' });
   } catch (err) {
     res.status(400).json({ message: err.message });

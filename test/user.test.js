@@ -183,8 +183,7 @@ describe('User', function () {
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
-      const content = user.contents.find(content => content.info.title.id === id);
-      expect(content.data_watched).to.equal(date);
+      expect(user.contents[0].date_watched).to.deep.equal(date);
     });
 
     it('It should let modify all fields', async function () {
@@ -203,10 +202,9 @@ describe('User', function () {
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
-      const content = user.contents.find(content => content.info.title.id === id);
-      expect(content.data_watched).to.equal(date);
-      expect(content.rate).to.equal(5);
-      expect(content.comment).to.equal('genial');
+      expect(user.contents[0].date_watched).to.deep.equal(date);
+      expect(user.contents[0].rate).to.equal(5);
+      expect(user.contents[0].comment).to.equal('genial');
     });
 
   });
