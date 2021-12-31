@@ -45,6 +45,15 @@ async function getUser(req = request, res = resonse) {
   }
 }
 
+async function deleteUser(req, res) {
+  try {
+    await User.findOneAndDelete({ _id: req.id });
+    res.json({ id: req._id, message: 'User deleted' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
@@ -66,6 +75,7 @@ async function getUserContent(req = request, res = response) {
     res.status(400).json({ message: err.message });
   }
 }
+
 
 // Todo: Refactorizar
 async function putUserContent(req = request, res = response) {
@@ -111,5 +121,6 @@ module.exports = {
   getUserContent,
   putUserContent,
   deleteUserContent,
-  getUser
+  getUser,
+  deleteUser
 }

@@ -60,6 +60,20 @@ describe('User', function () {
     });
   });
 
+  
+  describe('DELETE /api/user/', function () {
+    it('It should remove the user', async () => {
+      const res = await chai.request(server)
+        .get(USER_URL)
+        .set('authorization', token);
+        
+      expect(res).have.status(200);
+      const user = await User.findOne({ _id: res.body.id });
+      expect(user).to.be.equal(null);
+    });
+  });
+
+
   describe('POST /api/user/:username/content', function () {
     it('It should add content with the title and categoty=movie', async function () {
       const res = await chai.request(server)
