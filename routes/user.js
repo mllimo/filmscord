@@ -5,6 +5,11 @@ const { Router } = require('express');
 
 const router = new Router();
 
+router.get('/', [
+  fields_validator.validateJwt,
+  fields_validator.validateFields
+],user_controller.getUser);
+
 router.post('/:username/content', [
   fields_validator.validateJwt,
   check('category').notEmpty().withMessage('Category is required'),

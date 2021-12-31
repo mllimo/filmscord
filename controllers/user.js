@@ -35,6 +35,16 @@ async function insertContent(data, id) {
 }
 
 
+async function getUser(req = request, res = resonse) {
+  try {
+    const user = await User.findOne({ _id: req.id });
+    const {username, email, contents} = user;
+    res.json({ username, email, contents });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
@@ -100,5 +110,6 @@ module.exports = {
   postUserContent,
   getUserContent,
   putUserContent,
-  deleteUserContent
+  deleteUserContent,
+  getUser
 }

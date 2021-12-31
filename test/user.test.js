@@ -45,6 +45,21 @@ describe('User', function () {
     await Content.deleteMany({});
   });
 
+  describe('Get /api/user/', function () {
+    it('It should return a user info without the password ', async () => {
+      const res = await chai.request(server)
+        .get(USER_URL)
+        .set('authorization', token);
+        
+        expect(res).have.status(200);
+      expect(res.body).to.not.have.property('password');
+      expect(res.body).have.to.be.a('object');
+      expect(res.body).to.have.property('username').equal(username);
+      expect(res.body).to.have.property('email').equal(email);
+      expect(res.body).to.have.property('contents').to.deep.equal([]);
+    });
+  });
+
   describe('POST /api/user/:username/content', function () {
     it('It should add content with the title and categoty=movie', async function () {
       const res = await chai.request(server)
@@ -230,6 +245,7 @@ describe('User', function () {
       expect(user.contents).to.be.empty;
     });
   });
+
 
 });
 
