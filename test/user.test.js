@@ -60,6 +60,19 @@ describe('User', function () {
     });
   });
 
+  describe('UPDATE /api/user/', function () {
+    it('It should update the username of a user', async () => {
+      const fields = { fields: {username: 'update_username'} };
+      const res = await chai.request(server)
+        .put(USER_URL)
+        .set('authorization', token)
+        .send(fields);
+
+      expect(res).have.status(200);
+      const user = await User.findOne({ username: 'update_username' });
+      expect(user).to.not.be.null;
+    });
+  });
   
   describe('DELETE /api/user/', function () {
     it('It should remove the user', async () => {
