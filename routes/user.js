@@ -5,12 +5,20 @@ const { Router } = require('express');
 
 const router = new Router();
 
-router.get('/', [
+router.get('/:username', [
   fields_validator.validateJwt,
   fields_validator.validateFields
 ],user_controller.getUser);
 
-router.delete('/', [
+router.put('/:username', [
+  fields_validator.validateJwt,
+  fields_validator.validateFields,
+  check('fields.username').optional().isString(),
+  check('fields').notEmpty().withMessage('Fields are required'),
+],user_controller.putUser);
+
+
+router.delete('/:username', [
   fields_validator.validateJwt,
   fields_validator.validateFields
 ],user_controller.deleteUser);

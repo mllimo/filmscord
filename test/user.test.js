@@ -48,10 +48,10 @@ describe('User', function () {
   describe('Get /api/user/', function () {
     it('It should return a user info without the password ', async () => {
       const res = await chai.request(server)
-        .get(USER_URL)
+        .get(USER_URL + '/' + username)
         .set('authorization', token);
         
-        expect(res).have.status(200);
+      expect(res).have.status(200);
       expect(res.body).to.not.have.property('password');
       expect(res.body).have.to.be.a('object');
       expect(res.body).to.have.property('username').equal(username);
@@ -64,20 +64,20 @@ describe('User', function () {
     it('It should update the username of a user', async () => {
       const fields = { fields: {username: 'update_username'} };
       const res = await chai.request(server)
-        .put(USER_URL)
+        .put(USER_URL + '/' + username)
         .set('authorization', token)
         .send(fields);
 
       expect(res).have.status(200);
       const user = await User.findOne({ username: 'update_username' });
       expect(user).to.not.be.null;
-    });
+    }).timeout(10000);
   });
   
   describe('DELETE /api/user/', function () {
     it('It should remove the user', async () => {
       const res = await chai.request(server)
-        .get(USER_URL)
+        .get(USER_URL + '/' + username)
         .set('authorization', token);
         
       expect(res).have.status(200);

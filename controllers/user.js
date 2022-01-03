@@ -38,8 +38,23 @@ async function insertContent(data, id) {
 async function getUser(req = request, res = resonse) {
   try {
     const user = await User.findOne({ _id: req.id });
-    const {username, email, contents} = user;
+    const { username, email, contents } = user;
     res.json({ username, email, contents });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+async function putUser(req = request, res = response) {
+  const body = req.body;
+  try {
+    await db_operations.findOneAndUpdate(User,
+      {
+        _id: req.id,
+      },
+      body.fields
+    );
+    res.json({ message: 'User updated' });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -88,7 +103,7 @@ async function putUserContent(req = request, res = response) {
         obj[content_key] = new Date(body.fields[key]);
       } else {
         obj[content_key] = body.fields[key];
-      }  
+      }
     }
     await db_operations.findOneAndUpdate(User,
       {
@@ -122,5 +137,6 @@ module.exports = {
   putUserContent,
   deleteUserContent,
   getUser,
+  putUser,
   deleteUser
 }
