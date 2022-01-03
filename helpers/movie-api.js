@@ -1,5 +1,6 @@
 const axios = require('axios');
 
+const API_SEARCH_MULTI_URL = 'https://api.themoviedb.org/3/search/multi';
 const API_SEARCH_MOVIE_URL = 'https://api.themoviedb.org/3/search/movie';
 const API_SEARCH_TV_URL = 'https://api.themoviedb.org/3/search/tv';
 const API_MOVIE_URL = 'https://api.themoviedb.org/3/movie';
@@ -8,6 +9,18 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
 
 // TODO: refactorizar
+function getMulti(title, page) {
+  return {
+    baseURL: API_SEARCH_MULTI_URL,
+    params: {
+      api_key: process.env.MOVIEDB_TOKEN,
+      query: title,
+      page: page,
+      language: 'es'
+    }
+  }
+}
+
 function getMovies(title) {
   return {
     baseURL: API_SEARCH_MOVIE_URL,
@@ -52,7 +65,7 @@ function getParamsTv(id) {
 
 // TODO: refactorizar
 async function getMovieInfo(title) {
-  const info = { title: {}};
+  const info = { title: {} };
   const basic_info = axios.create(getMovies(title));
   let data;
   try {
@@ -83,14 +96,14 @@ async function getMovieInfo(title) {
 
 // TODO: refactorizar
 async function getTvInfo(title) {
-  const info = { title: {}};
+  const info = { title: {} };
   const basic_info = axios.create(getTvs(title));
   let data;
   try {
     data = (await basic_info.get()).data;
   } catch (error) {
     throw new Error('Tv not found');
-  } 
+  }
   info.cover = IMAGE_URL + data.results[0].poster_path;
   info.title.text = data.results[0].name;
   info.title.id = data.results[0].id;
@@ -112,7 +125,15 @@ async function getTvInfo(title) {
   return info;
 }
 
+async function getContent(title, page) {
+  const multi = axios.create(getMulti(title, page));
+  const { results, total_pages, total_results } = (await multi.get()).data;
+  const info = { results, total_pages, total_results };
+  return info;
+}
+
 module.exports = {
   getMovieInfo,
   getTvInfo,
+  getContent
 };

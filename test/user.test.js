@@ -67,7 +67,6 @@ describe('User', function () {
         .put(USER_URL + '/' + username)
         .set('authorization', token)
         .send(fields);
-
       expect(res).have.status(200);
       const user = await User.findOne({ username: 'update_username' });
       expect(user).to.not.be.null;
