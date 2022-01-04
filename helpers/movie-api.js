@@ -63,21 +63,28 @@ function getParamsTv(id) {
   };
 }
 
-// TODO: refactorizar
-async function getMovieInfo(title) {
+async function getContentCategory(title, category) {
+  let get;
+  let getParams;
+  if (category == 'movie') { get = getMovies; getParams = getParamsMovie; }
+  else if (category == 'tv') { get = getTvs; getParams = getParamsTv; }
+  else throw new Error('Category not found');
+
   const info = { title: {} };
-  const basic_info = axios.create(getMovies(title));
+  const basic_info = axios.create(get(title));
   let data;
+
   try {
     data = (await basic_info.get()).data;
   } catch (error) {
-    throw new Error('Movie not found');
+    throw new Error(category + ' not found');
   }
+
   info.cover = IMAGE_URL + data.results[0].poster_path;
   info.title.text = data.results[0].name;
   info.title.id = data.results[0].id;
 
-  const extended_info = axios.create(getParamsMovie(info.title.id));
+  const extended_info = axios.create(getParams(info.title.id));
   const data_extended = (await extended_info.get()).data;
   data_extended.genres.map(item => {
     const text = item.name;
@@ -95,34 +102,13 @@ async function getMovieInfo(title) {
 }
 
 // TODO: refactorizar
+async function getMovieInfo(title) {
+  return getContentCategory(title, 'movie');
+}
+
+// TODO: refactorizar
 async function getTvInfo(title) {
-  const info = { title: {} };
-  const basic_info = axios.create(getTvs(title));
-  let data;
-  try {
-    data = (await basic_info.get()).data;
-  } catch (error) {
-    throw new Error('Tv not found');
-  }
-  info.cover = IMAGE_URL + data.results[0].poster_path;
-  info.title.text = data.results[0].name;
-  info.title.id = data.results[0].id;
-
-  const extended_info = axios.create(getParamsTv(info.title.id));
-  const data_extended = (await extended_info.get()).data;
-  data_extended.genres.map(item => {
-    const text = item.name;
-    item.text = text;
-    delete item.name;
-    return item;
-  });
-
-  info.title.text = data_extended.original_title;
-  info.genres = data_extended.genres;
-  info.runtime = data_extended.runtime;
-  info.release_date = data_extended.release_date;
-
-  return info;
+  return getContentCategory(title, 'tv');
 }
 
 async function getContent(title, page) {
