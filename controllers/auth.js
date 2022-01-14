@@ -20,7 +20,7 @@ async function postLogin(req, res) {
     return res.status(400).json({ message: 'Password does not match' });
 
   const token = await utils.generateToken(user._id);
-  res.json({ message: 'Login successful', token: token });
+  res.json({ message: 'Login successful', token: token, username: user.username });
 }
 
 async function postSingUp(req, res) {
@@ -32,7 +32,7 @@ async function postSingUp(req, res) {
   try {
     const token = await utils.generateToken(user._id);
     await user.save(); 
-    res.json({ message: 'User created', token: token });
+    res.json({ message: 'User created', token: token, username: user.username });
   } catch (error) {
     console.error(error);
     res.status(400).json({ error: 'Signup error' });

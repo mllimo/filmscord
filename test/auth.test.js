@@ -1,4 +1,4 @@
-const Content = require('../models/content').Contents; 
+const Content = require('../models/content').Contents;
 const User = require('../models/user').Users;
 const utils = require('../helpers/utils');
 const chai_http = require('chai-http');
@@ -40,21 +40,57 @@ describe('POST /api/auth', () => {
     expect(res.body).have.a.property('token');
   });
 
+  it('It should signup a user and return token and username', async function () {
+    const res = await chai.request(server)
+      .post(SIGNUP_URL)
+      .type('json')
+      .send({
+        username: username_1,
+        password: password_1,
+        email: email_1
+      });
+
+    expect(res).to.have.status(200);
+    expect(res.body).have.a.property('token');
+    expect(res.body).have.a.property('username');
+    expect(res.body.username).to.equal(username_1);
+  });
+
   it('It should login a user', async function () {
-    const user = new User({username: username_1, password: password_1, email: email_1});
+    const user = new User({ username: username_1, password: password_1, email: email_1 });
     user.password = await utils.hashPassword(password_1);
     await user.save();
-    
+
     const res = await chai.request(server)
-    .post(LOGIN_URL)
-    .type('json')
-    .send({
-      email_username: username_1,
-      password: password_1,
-    });
+      .post(LOGIN_URL)
+      .type('json')
+      .send({
+        email_username: username_1,
+        password: password_1,
+      });
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).not.to.be.null;
+  });
+
+
+  it('It should login and return token and username', async function () {
+    const user = new User({ username: username_1, password: password_1, email: email_1 });
+    user.password = await utils.hashPassword(password_1);
+    await user.save();
+
+    const res = await chai.request(server)
+      .post(LOGIN_URL)
+      .type('json')
+      .send({
+        email_username: username_1,
+        password: password_1,
+      });
+
+    expect(res.statusCode).to.equal(200);
+    expect(res.body).have.a.property('token');
+    expect(res.body).have.a.property('username');
+    expect(res.body.username).to.equal(username_1);
   });
 
   it('It should not login a user with wrong credentials', async function () {
