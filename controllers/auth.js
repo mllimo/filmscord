@@ -25,8 +25,8 @@ async function postLogin(req, res) {
 
 async function postSingUp(req, res) {
   const body = req.body;
-  const user = new User(body);
-
+  const user = new User({...body, contents: []});
+  console.log(user);
   user.password = await utils.hashPassword(body.password);
 
   try {

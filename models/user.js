@@ -27,9 +27,7 @@ const UserSchema = new Schema({
     type: [{
       info: {
         type: ContentSchema,
-        default: [],
-        unique: true,
-        sparse: true 
+        sparse: true,
       },
       rate: {
         type: Number,
@@ -43,7 +41,7 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now
       },
-    }]
+    }],
   }
 });
 

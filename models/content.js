@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ContentSchema = new mongoose.Schema({
   title: {
     type: { id: Number, text: String },
+    sparse: true,
     required: true
   },
   category: {
