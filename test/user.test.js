@@ -50,20 +50,20 @@ describe('User', function () {
       const res = await chai.request(server)
         .get(USER_URL + '/' + username)
         .set('authorization', token);
-        
+
       expect(res).have.status(200);
       expect(res.body).to.not.have.property('password');
       expect(res.body).have.to.be.a('object');
       expect(res.body).to.have.property('username').equal(username);
       expect(res.body).to.have.property('email').equal(email);
       expect(res.body).to.have.property('contents').to.deep.equal([]);
-      expect(res.body._id).to.equal(null);
+      expect(res.body._id).to.equal(undefined);
     });
   });
 
   describe('UPDATE /api/user/', function () {
     it('It should update the username of a user', async () => {
-      const fields = { fields: {username: 'update_username'} };
+      const fields = { fields: { username: 'update_username' } };
       const res = await chai.request(server)
         .put(USER_URL + '/' + username)
         .set('authorization', token)
@@ -73,13 +73,13 @@ describe('User', function () {
       expect(user).to.not.be.null;
     }).timeout(10000);
   });
-  
+
   describe('DELETE /api/user/', function () {
     it('It should remove the user', async () => {
       const res = await chai.request(server)
         .get(USER_URL + '/' + username)
         .set('authorization', token);
-        
+
       expect(res).have.status(200);
       const user = await User.findOne({ _id: res.body.id });
       expect(user).to.be.equal(null);
@@ -166,6 +166,21 @@ describe('User', function () {
       expect(res).to.have.status(200);
       expect(res.body).to.have.lengthOf(2);
     });
+
+    it('It should not return de _id of DB', async function () {
+      await chai.request(server)
+        .post(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token)
+        .send(send_content_1);
+
+      const res = await chai.request(server)
+        .get(USER_URL + '/' + username + '/content')
+        .type('json')
+        .set('authorization', token);
+
+      expect(res.body[0]._id).equal(undefined);
+    });
   });
 
   describe('PUT /api/user', function () {
@@ -182,7 +197,7 @@ describe('User', function () {
         .type('json')
         .set('authorization', token)
         .send({ fields: { rate: 10 }, 'id': id });
-      
+
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
       //console.log(user.contents[0].info);
@@ -202,7 +217,7 @@ describe('User', function () {
         .type('json')
         .set('authorization', token)
         .send({ fields: { comment: 'genial' }, 'id': id });
-        //console.log(res);
+      //console.log(res);
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
       const content = user.contents.find(content => content.info.title.id === id);
