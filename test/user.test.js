@@ -46,7 +46,7 @@ describe('User', function () {
   });
 
   describe('Get /api/user/', function () {
-    it('It should return a user info without the password ', async () => {
+    it('It should return a user info without the password and _id', async () => {
       const res = await chai.request(server)
         .get(USER_URL + '/' + username)
         .set('authorization', token);
@@ -57,6 +57,7 @@ describe('User', function () {
       expect(res.body).to.have.property('username').equal(username);
       expect(res.body).to.have.property('email').equal(email);
       expect(res.body).to.have.property('contents').to.deep.equal([]);
+      expect(res.body._id).to.equal(null);
     });
   });
 
