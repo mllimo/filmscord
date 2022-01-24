@@ -167,7 +167,7 @@ describe('User', function () {
       expect(res.body).to.have.lengthOf(2);
     });
 
-    it('It should not return de _id of DB', async function () {
+    it('It should not return de _id of DB in the contents', async function () {
       await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
