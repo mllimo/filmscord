@@ -18,23 +18,19 @@ describe('User', function () {
   const email = 'test2@test.com';
   let user_id;
 
-  const title_1 = 'Spiderman';
-  const title_2 = 'Black Mirror';
-  const category_1 = 'movie';
-  const category_2 = 'tv';
-  let content_1 = {};
-  let content_2 = {};
-  let send_content_1 = {};
-  let send_content_2 = {};
+  const idShangChi = 566525;
+  const idBlackMirror = 42009;
+  const category_movie = 'movie';
+  const category_tv = 'tv';
+  let movie_content = {};
+  let tv_content = {};
   let token;
 
   beforeEach(async () => {
     await User.deleteMany({});
     await Content.deleteMany({});
-    content_1 = { title: { text: title_1 }, category: category_1 };
-    content_2 = { title: { text: content_2 }, category: category_2, rate: 5, comment: 'test comment' };
-    send_content_1 = { title: title_1, category: category_1 };
-    send_content_2 = { title: title_2, category: category_2, rate: 5, comment: 'test comment' };
+    movie_content = { id: idShangChi, category: category_movie };
+    tv_content = { id: idBlackMirror, category: category_tv, rate: 5, comment: 'test comment' };
     const user = new User({ username, email, password });
     token = await utils.generateToken(user._id);
     await user.save();
@@ -88,24 +84,24 @@ describe('User', function () {
 
 
   describe('POST /api/user/:username/content', function () {
-    it('It should add content with the title and categoty=movie', async function () {
+    it('It should add content with the id and categoty=movie', async function () {
       const res = await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1);
+        .send(movie_content);
 
       expect(res).to.have.status(200);
       const added = (await User.findOne({ username })).contents
       expect(added).to.have.lengthOf(1);
     });
 
-    it('It should add content with the title and categoty=tv', async function () {
+    it('It should add content with the id and categoty=tv', async function () {
       const res = await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2);
+        .send(tv_content);
       expect(res).to.have.status(200);
       const added = (await User.findOne({ username })).contents
       expect(added).not.to.be.null;
@@ -117,7 +113,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2);
+        .send(tv_content);
       expect(res).to.have.status(200);
       const added = (await User.findOne({ username })).contents
       expect(added).to.have.lengthOf(1);
@@ -130,13 +126,13 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2);
+        .send(tv_content);
 
       await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2);
+        .send(tv_content);
 
       const size = (await User.findOne({ username })).contents.length;
       expect(size).to.equal(1);
@@ -150,13 +146,13 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_2);
+        .send(tv_content);
 
       await chai.request(server)
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1);
+        .send(movie_content);
 
       const res = await chai.request(server)
         .get(USER_URL + '/' + username + '/content')
@@ -172,7 +168,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1);
+        .send(movie_content);
 
       const res = await chai.request(server)
         .get(USER_URL + '/' + username + '/content')
@@ -190,7 +186,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1)).body.content;
+        .send(movie_content)).body.content;
 
       const res = await chai.request(server)
         .put(USER_URL + '/' + username + '/content')
@@ -200,7 +196,6 @@ describe('User', function () {
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
-      //console.log(user.contents[0].info);
       const content = user.contents.find(content => content.info.title.id === id);
       expect(content.rate).to.equal(10);
     });
@@ -210,14 +205,13 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1)).body.content;
+        .send(movie_content)).body.content;
 
       const res = await chai.request(server)
         .put(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
         .send({ fields: { comment: 'genial' }, 'id': id });
-      //console.log(res);
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
       const content = user.contents.find(content => content.info.title.id === id);
@@ -230,7 +224,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1)).body.content;
+        .send(movie_content)).body.content;
 
       const res = await chai.request(server)
         .put(USER_URL + '/' + username + '/content')
@@ -249,7 +243,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1)).body.content;
+        .send(movie_content)).body.content;
 
       const res = await chai.request(server)
         .put(USER_URL + '/' + username + '/content')
@@ -272,7 +266,7 @@ describe('User', function () {
         .post(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send(send_content_1)).body.content;
+        .send(movie_content)).body.content;
 
       const res = await chai.request(server)
         .delete(USER_URL + '/' + username + '/content/')
