@@ -1,38 +1,7 @@
 const db_operations = require('../database/operations');
-const Content = require('../models/content').Contents;
-const movie_api = require('../helpers/movie-api');
 const { request, resonse, response } = require('express');
-const checker = require('../helpers/checker');
 const User = require('../models/user').Users;
-const utils = require('../helpers/utils');
-const bcrypt = require('bcryptjs');
-
-async function insertContent(data, id) {
-  const findFunction = data.category === 'movie' ? movie_api.getMovieInfo : movie_api.getTvInfo;
-  content = await Content.findOne({ title: { text: data.title }, category: data.category });
-  if (!content) {
-    info = await findFunction(data.title);
-    data = { ...data, ...info };
-    content = new Content(data);
-    content.save();
-  }
-  await db_operations.findOneAndUpdate(User,
-    {
-      _id: id,
-      'contents.info.title.id': { $ne: data.title.id, },
-    },
-    {
-      $push: {
-        contents: {
-          info: content,
-          rate: data.rate,
-          comment: data.comment,
-          data_watched: data.data_watch
-        }
-      }
-    });
-  return data;
-}
+const db_utils = require('../helpers/db');
 
 async function getUser(req = request, res = resonse) {
   try {
@@ -71,7 +40,7 @@ async function deleteUser(req, res) {
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
-    const data = await insertContent(body, req.id);
+    const data = await db_utils.insertContent(body, req.id);
     res.json({
       message: (body.category === 'movie' ? 'Movie added to your library' : 'TV show added to your library'),
       content: data.title.id

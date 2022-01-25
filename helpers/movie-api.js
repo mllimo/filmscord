@@ -63,52 +63,37 @@ function getParamsTv(id) {
   };
 }
 
-async function getContentCategory(title, category) {
-  let get;
+async function getContentCategory(id, category) {
   let getParams;
-  if (category == 'movie') { get = getMovies; getParams = getParamsMovie; }
-  else if (category == 'tv') { get = getTvs; getParams = getParamsTv; }
+  let data, info = {};
+  if (category == 'movie') { getParams = getParamsMovie; }
+  else if (category == 'tv') { getParams = getParamsTv; }
   else throw new Error('Category not found');
 
-  const info = { title: {} };
-  const basic_info = axios.create(get(title));
-  let data;
-
   try {
-    data = (await basic_info.get()).data;
+    data_request = axios.create(getParams(id));
+    data = (await data_request.get());
   } catch (error) {
     throw new Error(category + ' not found');
   }
 
-  info.cover = IMAGE_URL + data.results[0].poster_path;
-  info.title.text = data.results[0].name;
-  info.title.id = data.results[0].id;
-
-  const extended_info = axios.create(getParams(info.title.id));
-  const data_extended = (await extended_info.get()).data;
-  data_extended.genres.map(item => {
-    const text = item.name;
-    item.text = text;
-    delete item.name;
-    return item;
-  });
-
-  info.title.text = data_extended.original_title;
-  info.genres = data_extended.genres;
-  info.runtime = data_extended.runtime;
-  info.release_date = data_extended.release_date;
-
+  info.cover = IMAGE_URL + data.poster_path;
+  info.title = {text: data.name, id: data.id};
+  info.category = category;
+  info.genres = data.genres;
+  info.runtime = data.runtime ? data.runtime : data.episode_run_time;
+  info.release_date = data.release_date ? data.release_date : data.first_air_date;
   return info;
 }
 
 // TODO: refactorizar
-async function getMovieInfo(title) {
-  return getContentCategory(title, 'movie');
+async function getMovieInfo(id) {
+  return getContentCategory(id, 'movie');
 }
 
 // TODO: refactorizar
-async function getTvInfo(title) {
-  return getContentCategory(title, 'tv');
+async function getTvInfo(id) {
+  return getContentCategory(id, 'tv');
 }
 
 async function getContent(title, page) {
