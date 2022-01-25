@@ -24,6 +24,7 @@ const UserSchema = new Schema({
     default: false
   },
   contents: {
+
     type: [{
       info: {
         type: ContentSchema,
@@ -42,6 +43,7 @@ const UserSchema = new Schema({
         default: Date.now
       },
     }],
+    _id: false
   }
 });
 

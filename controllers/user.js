@@ -34,7 +34,6 @@ async function insertContent(data, id) {
   return data;
 }
 
-
 async function getUser(req = request, res = resonse) {
   try {
     const user = await User.findOne({ _id: req.id });
@@ -85,6 +84,7 @@ async function postUserContent(req = request, res = response) {
 async function getUserContent(req = request, res = response) {
   try {
     const user = await User.findOne({ _id: req.id });
+    console.log(user.contents);
     res.json(user.contents);
   } catch (err) {
     res.status(400).json({ message: err.message });
