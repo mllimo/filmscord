@@ -16,7 +16,7 @@ function getMulti(title, page) {
       api_key: process.env.MOVIEDB_TOKEN,
       query: title,
       page: page,
-      language: 'es'
+      language: 'en'
     }
   }
 }
@@ -26,7 +26,7 @@ function getMovies(title) {
     baseURL: API_SEARCH_MOVIE_URL,
     params: {
       api_key: process.env.MOVIEDB_TOKEN,
-      language: 'es',
+      language: 'en',
       query: title,
     }
   };
@@ -37,7 +37,7 @@ function getTvs(title) {
     baseURL: API_SEARCH_TV_URL,
     params: {
       api_key: process.env.MOVIEDB_TOKEN,
-      language: 'es',
+      language: 'en',
       query: title,
     }
   };
@@ -48,7 +48,7 @@ function getParamsMovie(id) {
     baseURL: API_MOVIE_URL + '/' + id,
     params: {
       api_key: process.env.MOVIEDB_TOKEN,
-      language: 'es',
+      language: 'en',
     }
   };
 }
@@ -58,7 +58,7 @@ function getParamsTv(id) {
     baseURL: API_TV_URL + '/' + id,
     params: {
       api_key: process.env.MOVIEDB_TOKEN,
-      language: 'es',
+      language: 'en',
     }
   };
 }
@@ -72,11 +72,11 @@ async function getContentCategory(id, category) {
 
   try {
     data_request = axios.create(getParams(id));
-    data = (await data_request.get());
+    data = (await data_request.get()).data;
   } catch (error) {
     throw new Error(category + ' not found');
   }
-
+  
   info.cover = IMAGE_URL + data.poster_path;
   info.title = {text: data.name, id: data.id};
   info.category = category;
