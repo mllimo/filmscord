@@ -59,7 +59,6 @@ async function getUserContent(req = request, res = response) {
   }
 }
 
-
 // Todo: Refactorizar
 async function putUserContent(req = request, res = response) {
   const body = req.body;

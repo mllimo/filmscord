@@ -5,6 +5,8 @@ const { Router } = require('express');
 const router = Router();
 
 router.get('/search', [
+  query('title').notEmpty().withMessage('Title is required'),
+  query('page').notEmpty().withMessage('Page is required'),
   query('page').isNumeric().withMessage('Page is not valid'),
   query('title').isString().withMessage('Title is not valid'),
   fields_validator.validateFields

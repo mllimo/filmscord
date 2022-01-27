@@ -24,7 +24,7 @@ describe('API', function () {
 
     expect(res).to.have.status(200);
     expect(res.body).to.be.a('object');
-    expect(res.body).to.have.property('results');
+    expect(res.body).to.have.property('contents');
     expect(res.body).to.have.property('total_pages');
     expect(res.body).to.have.property('total_results');
   }).timeout(20000);

@@ -76,12 +76,12 @@ async function getContentCategory(id, category) {
   } catch (error) {
     throw new Error(category + ' not found');
   }
-  
+
   info.cover = IMAGE_URL + data.poster_path;
-  info.title = {text: data.name, id: data.id};
+  info.title = { text: (category == 'tv' ? data.name : data.title), id: data.id };
   info.category = category;
   info.genres = data.genres;
-  info.runtime = data.runtime ? data.runtime : data.episode_run_time;
+  info.runtime = data.runtime ? data.runtime || 0 : data.episode_run_time || 0;
   info.release_date = data.release_date ? data.release_date : data.first_air_date;
   return info;
 }
@@ -99,7 +99,14 @@ async function getTvInfo(id) {
 async function getContent(title, page) {
   const multi = axios.create(getMulti(title, page));
   const { results, total_pages, total_results } = (await multi.get()).data;
-  const info = { results, total_pages, total_results };
+  const contents = await Promise.all(results.map(async (content) => {
+    const info = await getContentCategory(content.id, content.media_type);
+    return {
+      ...info,
+      rating: Math.ceil(((5 * content.vote_average) / 10)),
+    };
+  }));
+  const info = { contents, total_pages, total_results };
   return info;
 }
 
