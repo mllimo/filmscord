@@ -64,12 +64,12 @@ async function putUserContent(req = request, res = response) {
   const body = req.body;
   try {
     let obj = {};
-    for (let key in body.fields) {
+    for (let key in body) {
       const content_key = `contents.$.${key}`
       if (key == 'date_watched') {
-        obj[content_key] = new Date(body.fields[key]);
+        obj[content_key] = new Date(body[key]);
       } else {
-        obj[content_key] = body.fields[key];
+        obj[content_key] = body[key];
       }
     }
     await db_operations.findOneAndUpdate(User,

@@ -192,7 +192,7 @@ describe('User', function () {
         .put(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send({ fields: { rate: 10 }, 'id': id });
+        .send({ rate: 10 , 'id': id });
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
@@ -211,7 +211,7 @@ describe('User', function () {
         .put(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send({ fields: { comment: 'genial' }, 'id': id });
+        .send({ comment: 'genial', 'id': id });
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
       const content = user.contents.find(content => content.info.title.id === id);
@@ -230,7 +230,7 @@ describe('User', function () {
         .put(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send({ fields: { date_watched: date }, 'id': id });
+        .send({ date_watched: date, 'id': id });
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
@@ -249,7 +249,7 @@ describe('User', function () {
         .put(USER_URL + '/' + username + '/content')
         .type('json')
         .set('authorization', token)
-        .send({ fields: { date_watched: date, rate: 5, comment: 'genial' }, 'id': id });
+        .send({ date_watched: date, rate: 5, comment: 'genial', 'id': id });
 
       expect(res).to.have.status(200);
       user = await User.findOne({ username });
