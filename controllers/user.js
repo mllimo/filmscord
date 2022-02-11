@@ -40,12 +40,14 @@ async function deleteUser(req, res) {
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
+    console.log(body);
     const data = await db_utils.insertContent(body, req.id);
     res.json({
       message: (body.category === 'movie' ? 'Movie added to your library' : 'TV show added to your library'),
-      content: data.title.id
+      content: data.info.title.id
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: err.message });
   }
 }

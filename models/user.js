@@ -43,7 +43,6 @@ const UserSchema = new Schema({
         default: Date.now
       },
     }],
-    _id: false
   }
 });
 

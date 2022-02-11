@@ -179,7 +179,7 @@ describe('User', function () {
     });
   });
 
-  describe('PUT /api/user', function () {
+  describe('PUT /api/user/:username/content', function () {
 
     it('It should let modify rate field', async function () {
       const id = (await chai.request(server)
@@ -218,7 +218,7 @@ describe('User', function () {
       expect(content.comment).to.equal('genial');
     });
 
-    it('It should let modify data_watched field', async function () {
+    it('It should let modify date_watched field', async function () {
       const date = new Date();
       const id = (await chai.request(server)
         .post(USER_URL + '/' + username + '/content')

@@ -6,16 +6,16 @@ const movie_api = require('./movie-api');
 async function insertContent(data, id) {
   const findFunction = data.category === 'movie' ? movie_api.getMovieInfo : movie_api.getTvInfo;
   content = await Content.findOne({ title: { id: data.id }, category: data.category });
+
   if (!content) {
     info = await findFunction(data.id);
-    data = { ...data, ...info };
-    content = new Content(data);
+    content = new Content(info);
     content.save();
   }
   await db_operations.findOneAndUpdate(User,
     {
       _id: id,
-      'contents.info.title.id': { $ne: data.title.id, },
+      'contents.info.title.id': { $ne: info.title.id, },
     },
     {
       $push: {
@@ -23,11 +23,12 @@ async function insertContent(data, id) {
           info: content,
           rate: data.rate,
           comment: data.comment,
-          data_watched: data.data_watch
+          date_watched: data.date_watched
         }
       }
     });
-  return data;
+
+  return {...data, info};
 }
 
 module.exports = {

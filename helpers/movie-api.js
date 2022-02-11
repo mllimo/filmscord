@@ -82,6 +82,7 @@ async function getContentCategory(id, category) {
   info.category = category;
   info.genres = data.genres;
   info.runtime = data.runtime ? data.runtime || 0 : data.episode_run_time || 0;
+  if (Array.isArray(info.runtime)) info.runtime = info.runtime[0];
   info.release_date = data.release_date ? data.release_date : data.first_air_date;
   return info;
 }
