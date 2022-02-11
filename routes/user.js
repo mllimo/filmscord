@@ -42,7 +42,6 @@ router.put('/:username/content', [
   check('id').notEmpty().withMessage('Content Id is required'),
   check('rate').optional().isInt({ min: 0, max: 10 }).withMessage('Rate range is not valid'),
   check('comment').optional().isString().withMessage('Comment format is not valid'),
-  check('date_watched').optional().isISO8601().withMessage('Date format is not valid'),
   fields_validator.validateFields
 ], user_controller.putUserContent);
 

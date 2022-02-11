@@ -179,7 +179,7 @@ describe('User', function () {
     });
   });
 
-  describe('PUT /api/user', function () {
+  describe('PUT /api/user/:username/content', function () {
 
     it('It should let modify rate field', async function () {
       const id = (await chai.request(server)

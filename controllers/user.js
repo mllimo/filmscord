@@ -1,7 +1,8 @@
-const db_operations = require('../database/operations');
+const dbOperations = require('../database/operations');
 const { request, resonse, response } = require('express');
 const User = require('../models/user').Users;
-const db_utils = require('../helpers/db');
+const dbUtils = require('../helpers/db');
+const movieApi = require('../helpers/movie-api');
 
 async function getUser(req = request, res = resonse) {
   try {
@@ -16,7 +17,7 @@ async function getUser(req = request, res = resonse) {
 async function putUser(req = request, res = response) {
   const body = req.body;
   try {
-    await db_operations.findOneAndUpdate(User,
+    await dbOperations.findOneAndUpdate(User,
       {
         _id: req.id,
       },
@@ -40,12 +41,13 @@ async function deleteUser(req, res) {
 async function postUserContent(req = request, res = response) {
   const body = req.body;
   try {
-    const data = await db_utils.insertContent(body, req.id);
+    const data = await dbUtils.insertContent(body, req.id);
     res.json({
       message: (body.category === 'movie' ? 'Movie added to your library' : 'TV show added to your library'),
-      content: data.title.id
+      content: data.id
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: err.message });
   }
 }
@@ -72,7 +74,7 @@ async function putUserContent(req = request, res = response) {
         obj[content_key] = body[key];
       }
     }
-    await db_operations.findOneAndUpdate(User,
+    await dbOperations.findOneAndUpdate(User,
       {
         _id: req.id,
         'contents.info.title.id': body.id
@@ -89,7 +91,7 @@ async function putUserContent(req = request, res = response) {
 async function deleteUserContent(req = request, res = response) {
   try {
     for (let id of req.body.ids) {
-      await db_operations.findOneAndUpdate(User, { _id: req.id }, { $pull: { contents: { 'info.title.id': id } } });
+      await dbOperations.findOneAndUpdate(User, { _id: req.id }, { $pull: { contents: { 'info.title.id': id } } });
     }
     res.json({ message: 'Contents deleted' });
   } catch (err) {
