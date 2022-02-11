@@ -12,8 +12,7 @@ async function insertContent(data, id) {
     content = new Content(info);
     await content.save();
   }
-
-  console.log(content)
+  
   await db_operations.findOneAndUpdate(User,
     {
       _id: id,
