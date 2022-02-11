@@ -163,20 +163,6 @@ describe('User', function () {
       expect(res.body).to.have.lengthOf(2);
     });
 
-    it('It should not return de _id of DB in the contents', async function () {
-      await chai.request(server)
-        .post(USER_URL + '/' + username + '/content')
-        .type('json')
-        .set('authorization', token)
-        .send(movie_content);
-
-      const res = await chai.request(server)
-        .get(USER_URL + '/' + username + '/content')
-        .type('json')
-        .set('authorization', token);
-
-      expect(res.body[0]._id).equal(undefined);
-    });
   });
 
   describe('PUT /api/user/:username/content', function () {
