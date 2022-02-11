@@ -113,6 +113,7 @@ async function getContent(title, page) {
 
 module.exports = {
   getMovieInfo,
+  getContentCategory,
   getTvInfo,
   getContent
 };

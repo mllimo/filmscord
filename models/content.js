@@ -30,11 +30,6 @@ const ContentSchema = new mongoose.Schema({
 });
 
 
-ContentSchema.methods.toJSON = function () {
-  const { __v, _id, ...content } = this.toObject();
-  return content;
-}
-
 const Contents = mongoose.model('Contents', ContentSchema);
 
 module.exports = {

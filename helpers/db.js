@@ -1,17 +1,19 @@
 const Content = require('../models/content').Contents;
 const User = require('../models/user').Users;
 const db_operations = require('../database/operations');
-const movie_api = require('./movie-api');
+const movieApi = require('./movie-api');
 
 async function insertContent(data, id) {
-  const findFunction = data.category === 'movie' ? movie_api.getMovieInfo : movie_api.getTvInfo;
+  const findFunction = data.category === 'movie' ? movieApi.getMovieInfo : movieApi.getTvInfo;
   content = await Content.findOne({ title: { id: data.id }, category: data.category });
 
   if (!content) {
     info = await findFunction(data.id);
     content = new Content(info);
-    content.save();
+    await content.save();
   }
+
+  console.log(content)
   await db_operations.findOneAndUpdate(User,
     {
       _id: id,

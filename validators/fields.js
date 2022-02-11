@@ -12,6 +12,7 @@ async function validateFields(req = request, res = response, next) {
 
 async function validateJwt(req = request, res = response, next) {
   const token = req.headers.authorization;
+  console.log(req.body);
   if (!token) return res.status(401).json({ message: 'No token provided' });
   
   try {
