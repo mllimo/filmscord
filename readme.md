@@ -1,5 +1,3 @@
-# API
+# Filmscord
 
-## Series y películas
-``` https://api.themoviedb.org/3/movie/550?api_key=token ```
-
+Web application to store your watched movies and series, where you can also rate them, comment on them and save when you have seen them.
